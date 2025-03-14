@@ -107,7 +107,7 @@ export default function Home() {
               </div>
             </div>
 
-            <p className="uppercase font-normal">
+            <p className="uppercase font-normal text-[20px]">
               A FLOOR-STANDING MODEL DESIGNED FOR CONVENIENT PLACEMENT ON THE GROUND.
             </p>
 
