@@ -324,7 +324,7 @@ export default function Home() {
 
       {/* Specifications Section */}
       <section className="py-12 max-w-[1200px] mx-auto px-4 border-t border-gray-200 mb-[80px]">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-[60px]">
           <h2
             style={{
               fontFamily: "Helvetica Neue",
