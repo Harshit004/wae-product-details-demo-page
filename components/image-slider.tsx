@@ -9,42 +9,29 @@ interface ImageSliderProps {
 
 export default function ImageSlider({ images }: ImageSliderProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [isTransitioning, setIsTransitioning] = useState(false)
   const sliderRef = useRef<HTMLDivElement>(null)
 
   const goToPrevious = () => {
-    if (isTransitioning) return
-    setIsTransitioning(true)
     setCurrentIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length)
   }
 
   const goToNext = () => {
-    if (isTransitioning) return
-    setIsTransitioning(true)
     setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length)
   }
 
-  // Reset transition flag after animation completes (500ms)
+  // Auto-slide functionality: advance image every 5 seconds
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsTransitioning(false)
-    }, 500)
-    return () => clearTimeout(timer)
-  }, [currentIndex])
-
-  // Auto-slide: advance image every 3 seconds if not transitioning
-  useEffect(() => {
-    const autoSlide = setInterval(() => {
-      if (!isTransitioning) {
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length)
-      }
-    }, 3000)
-    return () => clearInterval(autoSlide)
-  }, [isTransitioning, images.length])
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length)
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [images.length])
 
   return (
-    <div className="relative overflow-hidden" ref={sliderRef}>
-      <div className="relative h-[500px] w-full">
+    <div className="relative w-[600px] h-[600px] overflow-hidden" ref={sliderRef}>
+      <div className="flex transition-transform duration-500 ease-in-out h-full"
+        style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+      >
         {images.map((image, index) => (
           <div
             key={index}
@@ -64,19 +51,20 @@ export default function ImageSlider({ images }: ImageSliderProps) {
       {/* Navigation Arrows */}
       <button
         onClick={goToPrevious}
-        className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 rounded-full p-2 shadow-md hover:bg-white transition-colors z-20"
+        className="absolute left-1 top-1/2 -translate-y-1/2 bg-white/80 border border-gray-400 rounded-lg p-0 shadow-md hover:bg-white transition-colors z-20 flex items-center justify-center"
+        style={{ width: "32px", height: "32px", borderRadius: "8px", maxWidth: "490px" }}
         aria-label="Previous image"
-        disabled={isTransitioning}
       >
-        <ChevronLeft className="h-6 w-6" />
+        <ChevronLeft className="h-5 w-5" />
       </button>
+
       <button
         onClick={goToNext}
-        className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 rounded-full p-2 shadow-md hover:bg-white transition-colors z-20"
+        className="absolute right-1 top-1/2 -translate-y-1/2 bg-white/80 border border-gray-400 rounded-lg p-0 shadow-md hover:bg-white transition-colors z-20 flex items-center justify-center"
+        style={{ width: "32px", height: "32px", borderRadius: "8px", maxWidth: "490px" }}
         aria-label="Next image"
-        disabled={isTransitioning}
       >
-        <ChevronRight className="h-6 w-6" />
+        <ChevronRight className="h-5 w-5" />
       </button>
     </div>
   )

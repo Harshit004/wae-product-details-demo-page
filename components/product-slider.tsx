@@ -1,24 +1,15 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import Image from "next/image"
+import { useState, useEffect, useRef } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
-interface ProductSliderProps {
+interface ImageSliderProps {
   images: string[]
 }
 
-export default function ProductSlider({ images }: ProductSliderProps) {
+export default function ImageSlider({ images }: ImageSliderProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
-
-  // Auto-slide functionality
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length)
-    }, 5000)
-
-    return () => clearInterval(interval)
-  }, [images.length])
+  const sliderRef = useRef<HTMLDivElement>(null)
 
   const goToPrevious = () => {
     setCurrentIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length)
@@ -28,20 +19,28 @@ export default function ProductSlider({ images }: ProductSliderProps) {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length)
   }
 
+  // Auto-slide functionality: advance image every 5 seconds
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length)
+  //   }, 5000)
+  //   return () => clearInterval(interval)
+  // }, [images.length])
+
   return (
-    <div className="relative w-[600px] h-[600px] overflow-hidden">
-      <div
-        className="flex transition-transform duration-500 ease-in-out h-full"
-        style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-      >
+    <div className="relative w-[600px] h-[600px] overflow-hidden" ref={sliderRef}>
+      <div className="relative h-[500px] w-full">
         {images.map((image, index) => (
-          <div key={index} className="min-w-full h-full flex-shrink-0">
-            <Image
+          <div
+            key={index}
+            className={`absolute top-0 left-0 w-full h-full transition-opacity duration-500 ease-in-out ${
+              index === currentIndex ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
+            }`}
+          >
+            <img
               src={image || "/placeholder.svg"}
-              alt={`Product view ${index + 1}`}
-              fill
-              className="object-contain"
-              priority={index === 0}
+              alt={`Slide ${index + 1}`}
+              className="w-full h-full object-cover"
             />
           </div>
         ))}
@@ -49,25 +48,24 @@ export default function ProductSlider({ images }: ProductSliderProps) {
 
       {/* Navigation Arrows */}
       <button
-  onClick={goToPrevious}
-  className="absolute left-1 top-1/2 -translate-y-1/2 bg-white/80 border border-gray-400 rounded-lg p-0 shadow-md hover:bg-white transition-colors z-20 flex items-center justify-center"
-  style={{ width: "32px", height: "32px", borderRadius: "8px", maxWidth: "490px" }}
-  aria-label="Previous image"
->
-  <ChevronLeft className="h-5 w-5" />
-</button>
+        onClick={goToPrevious}
+        className="absolute left-1 top-1/2 -translate-y-1/2 bg-white/80 border border-gray-400 rounded-lg p-0 shadow-md hover:bg-white transition-colors z-20 flex items-center justify-center"
+        style={{ width: "32px", height: "32px", borderRadius: "8px", maxWidth: "490px" }}
+        aria-label="Previous image"
+      >
+        <ChevronLeft className="h-5 w-5" />
+      </button>
 
-<button
-  onClick={goToNext}
-  className="absolute right-1 top-1/2 -translate-y-1/2 bg-white/80 border border-gray-400 rounded-lg p-0 shadow-md hover:bg-white transition-colors z-20 flex items-center justify-center"
-  style={{ width: "32px", height: "32px", borderRadius: "8px", maxWidth: "490px" }}
-  aria-label="Next image"
->
-  <ChevronRight className="h-5 w-5" />
-</button>
+      <button
+        onClick={goToNext}
+        className="absolute right-1 top-1/2 -translate-y-1/2 bg-white/80 border border-gray-400 rounded-lg p-0 shadow-md hover:bg-white transition-colors z-20 flex items-center justify-center"
+        style={{ width: "32px", height: "32px", borderRadius: "8px", maxWidth: "490px" }}
+        aria-label="Next image"
+      >
+        <ChevronRight className="h-5 w-5" />
+      </button>
 
-
-      {/* Dots Indicator */}
+      {/* Dots Indicator (optional, currently commented out) */}
       {/* <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
         {images.map((_, index) => (
           <button
@@ -78,7 +76,8 @@ export default function ProductSlider({ images }: ProductSliderProps) {
           />
         ))}
       </div> */}
+
+
     </div>
   )
 }
-
